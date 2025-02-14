@@ -1,33 +1,60 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import React, { useState } from 'react';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material';
 import { styled } from '@mui/system';
+import { Menu } from 'lucide-react';
 
 const Navbar = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   return (
-    <StyledAppBar position="static">
-      <Toolbar>
-        {/* Logo Section */}
-        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-          <Logo>
-            <Typography variant="h6">🎟️ ticz</Typography>
-          </Logo>
+    <>
+      <StyledAppBar position="static">
+        <Toolbar>
+          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+            <Logo>
+              <Typography variant="h6">🎟️ ticz</Typography>
+            </Logo>
 
-          {/* Navigation Links */}
-          <NavLinks>
-            <NavItem>Events</NavItem>
-            <NavItem>My Tickets</NavItem>
-            <NavItem>About Project</NavItem>
-          </NavLinks>
-        </Box>
+            <NavLinks>
+              <NavItem>Events</NavItem>
+              <NavItem>My Tickets</NavItem>
+              <NavItem>About Project</NavItem>
+            </NavLinks>
+          </Box>
 
-        {/* My Tickets Button */}
-        <StyledButton variant="contained">MY TICKETS →</StyledButton>
-      </Toolbar>
-    </StyledAppBar>
+          <StyledButton variant="contained" sx={{ display: { xs: 'none', sm: 'block' } }}>
+            MY TICKETS →
+          </StyledButton>
+
+          <IconButton 
+            edge="end" 
+            color="inherit" 
+            onClick={() => setDrawerOpen(true)} 
+            sx={{ display: { xs: 'block', sm: 'none' } }}
+          >
+            <Menu size={24} color="white" />
+          </IconButton>
+        </Toolbar>
+      </StyledAppBar>
+
+      <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <List sx={{ width: 250 }}>
+          {['Events', 'My Tickets', 'About Project'].map((text) => (
+            <ListItem button key={text} onClick={() => setDrawerOpen(false)}>
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
+          <ListItem button onClick={() => setDrawerOpen(false)}>
+            <StyledButton variant="contained" fullWidth>
+              MY TICKETS →
+            </StyledButton>
+          </ListItem>
+        </List>
+      </Drawer>
+    </>
   );
 };
 
-/* Styled Components */
 const StyledAppBar = styled(AppBar)({
   backgroundColor: 'rgba(19, 78, 74, 0.5)',
   borderRadius: '12px',
@@ -45,10 +72,13 @@ const Logo = styled(Box)({
   marginRight: '30px',
 });
 
-const NavLinks = styled(Box)({
+const NavLinks = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: '20px',
-});
+  [theme.breakpoints.down('sm')]: {
+    display: 'none', 
+  },
+}));
 
 const NavItem = styled(Typography)({
   fontSize: '14px',

@@ -1,5 +1,5 @@
 import React from "react";
-import { Mail, Download } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-// Custom theme
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -24,12 +23,15 @@ const theme = createTheme({
   },
 });
 
-// Styled components
 const StyledTicketPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: 'rgba(19, 78, 74, 0.5)',
   border: '1px solid rgba(20, 184, 166, 0.3)',
   borderRadius: '24px',
   padding: theme.spacing(3),
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2),
+    borderRadius: '16px',
+  },
 }));
 
 const ProfileImage = styled(Box)(({ theme }) => ({
@@ -37,6 +39,10 @@ const ProfileImage = styled(Box)(({ theme }) => ({
   width: '128px',
   height: '128px',
   margin: '0 auto',
+  [theme.breakpoints.down('sm')]: {
+    width: '96px',
+    height: '96px',
+  },
   '& img': {
     width: '100%',
     height: '100%',
@@ -57,10 +63,22 @@ const BarcodePaper = styled(Paper)(({ theme }) => ({
   border: '1px solid rgba(20, 184, 166, 0.3)',
   borderRadius: '16px',
   padding: theme.spacing(2),
-  // marginTop: theme.spacing(2),
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(1.5),
+    borderRadius: '12px',
+  },
 }));
 
-const TicketConfirmationStep = ({ ticketDetails, onDownload, onEmail }) => {
+const TicketConfirmationStep = ({ ticketDetails, onDownload, onEmail, onReset }) => {
+  const navigate = useNavigate();
+
+  const handleBookAnother = () => {
+    if (onReset) {
+      onReset();
+    }
+    navigate('/');
+  };
+
   if (!ticketDetails) return null;
 
   return (
@@ -69,39 +87,39 @@ const TicketConfirmationStep = ({ ticketDetails, onDownload, onEmail }) => {
         minHeight: 'vh',
         bgcolor: 'background.default',
         color: 'white',
-        p: 4,
+        p: { xs: 2, sm: 3, md: 4 },
       }}>
-        <Box sx={{ maxWidth: '40rem', mx: 'auto' }}>
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 60,
-        p: 2,
-        marginBottom:4,
-        // border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 1
-      }}
-    >
-      <Typography  color="primary" 
-        variant="body2" 
-        sx={{ mb: 1 }} 
-        aria-label="Step 3 of 3">
-        Ready
-      </Typography>
-      <Typography 
-        color="primary" 
-        variant="body2" 
-        sx={{ mb: 1 }} 
-        aria-label="Step 3 of 3"
-      >
-        Step 3/3
-      </Typography>
-      
-    </Box>
-            <Typography variant="h4" fontWeight="bold" tabIndex={0}>
+        <Box sx={{ 
+          maxWidth: { xs: '100%', sm: '40rem' }, 
+          mx: 'auto',
+          px: { xs: 1, sm: 2 }
+        }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4 } }}>
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: { xs: 'space-between', sm: 'center' },
+              gap: { xs: 2, sm: 60 },
+              p: { xs: 1, sm: 2 },
+              marginBottom: { xs: 2, sm: 4 },
+              borderRadius: 1
+            }}>
+              <Typography color="primary" 
+                variant="body2" 
+                sx={{ mb: 1 }}>
+                Ready
+              </Typography>
+              <Typography color="primary" 
+                variant="body2" 
+                sx={{ mb: 1 }}>
+                Step 3/3
+              </Typography>
+            </Box>
+            <Typography variant="h4" 
+              fontWeight="bold" 
+              sx={{ 
+                fontSize: { xs: '1.5rem', sm: '2rem' }
+              }}>
               Your Ticket is Booked!
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -109,35 +127,44 @@ const TicketConfirmationStep = ({ ticketDetails, onDownload, onEmail }) => {
             </Typography>
           </Box>
 
-          <Box sx={{ maxWidth: '28rem', mx: 'auto' }}
+          <Box sx={{ 
+            maxWidth: { xs: '100%', sm: '28rem' }, 
+            mx: 'auto'
+          }}
             role="article"
-            aria-label="Event Ticket"
-            tabIndex={0}
-          >
+            aria-label="Event Ticket">
             <StyledTicketPaper>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {/* Event Header */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, sm: 3 } }}>
                 <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="h5" fontWeight="bold">
+                  <Typography variant="h5" 
+                    fontWeight="bold"
+                    sx={{ 
+                      fontSize: { xs: '1.25rem', sm: '1.5rem' }
+                    }}>
                     {ticketDetails.eventName}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
                     [Event Name] at [Event Place]
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, mt: 1 }}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    gap: 0.5, 
+                    mt: 1 
+                  }}>
                     <Box sx={{
                       width: 8,
                       height: 8,
                       bgcolor: 'primary.main',
                       borderRadius: '50%',
-                    }} aria-hidden="true" />
+                    }} />
                     <Typography variant="caption">
                       {ticketDetails.eventDate} | {ticketDetails.eventTime}
                     </Typography>
                   </Box>
                 </Box>
 
-                {/* Profile Image */}
                 <ProfileImage>
                   <img
                     src={ticketDetails.profilePhoto}
@@ -145,15 +172,14 @@ const TicketConfirmationStep = ({ ticketDetails, onDownload, onEmail }) => {
                   />
                 </ProfileImage>
 
-                {/* Ticket Details */}
-                <Grid container spacing={0}>
-                  <Grid item xs={5.5}>
+                <Grid container spacing={0} sx={{ gap: { xs: 2, sm: 0 } }}>
+                  <Grid item xs={12} sm={5.5}>
                     <Typography color="text.secondary" variant="body2">Event Attendee</Typography>
                     <Typography fontWeight="medium">{ticketDetails.attendee}</Typography>
                     <Typography color="text.secondary" variant="caption">Ticket Type</Typography>
                     <Typography fontWeight="medium">{ticketDetails.ticketType}</Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} sm={6}>
                     <Typography color="text.secondary" variant="body2">Event Host Email</Typography>
                     <Typography fontWeight="medium">{ticketDetails.email}</Typography>
                     <Typography color="text.secondary" variant="caption">Tickets</Typography>
@@ -161,7 +187,6 @@ const TicketConfirmationStep = ({ ticketDetails, onDownload, onEmail }) => {
                   </Grid>
                 </Grid>
 
-                {/* Note */}
                 <Typography variant="caption" color="text.secondary" align="center">
                   PS: We like to make everything easy with as few
                   steps as possible. Hope to see you!
@@ -169,15 +194,14 @@ const TicketConfirmationStep = ({ ticketDetails, onDownload, onEmail }) => {
               </Box>
             </StyledTicketPaper>
 
-            {/* Barcode Section */}
             <BarcodePaper>
               <Box sx={{
                 display: 'flex',
                 justifyContent: 'center',
-              }} aria-label="Ticket barcode">
+              }}>
                 <Box sx={{
-                  width: 192,
-                  height: 48,
+                  width: { xs: '160px', sm: '192px' },
+                  height: { xs: '40px', sm: '48px' },
                   background: 'linear-gradient(to right, transparent, white, transparent)',
                   opacity: 0.7,
                 }} />
@@ -188,28 +212,40 @@ const TicketConfirmationStep = ({ ticketDetails, onDownload, onEmail }) => {
             </BarcodePaper>
           </Box>
 
-          {/* Action Buttons */}
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 4 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'center', 
+            gap: 2, 
+            mt: 4,
+            px: { xs: 2, sm: 0 }
+          }}>
             <Button
-            id="btn"
               variant="contained"
-              onClick={onEmail}
+              id="btn"
+              onClick={handleBookAnother}
               color="primary"
-              sx={{ px: 3, py: 1.5 }}
-              aria-label="Download ticket"
-            >
+              fullWidth={false}
+              sx={{ 
+                px: 3, 
+                py: 1.5,
+                width: { xs: '100%', sm: 'auto' }
+              }}>
               Book Another Ticket
             </Button>
             <Button
-  id="btn"
-  variant="contained"
-  onClick={onDownload}
-  color="primary"
-  sx={{ px: 3, py: 1.5 }}
-  aria-label="Download ticket"
->
-  Download Ticket
-</Button>
+              variant="contained"
+              id="btn"
+              onClick={onDownload}
+              color="primary"
+              fullWidth={false}
+              sx={{ 
+                px: 3, 
+                py: 1.5,
+                width: { xs: '100%', sm: 'auto' }
+              }}>
+              Download Ticket
+            </Button>
           </Box>
         </Box>
       </Box>

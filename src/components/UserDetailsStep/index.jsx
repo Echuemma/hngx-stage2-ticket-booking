@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Upload, Mail } from "lucide-react";
 import {
   Box,
@@ -11,8 +11,6 @@ import {
   styled
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-// Custom theme
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -46,23 +44,51 @@ const theme = createTheme({
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: 'vh',
-  width: '60%',
+  width: '95%', 
   margin: 'auto',
   padding: theme.spacing(4),
   backgroundColor: 'rgba(16, 36, 36, 0.9)',
+  [theme.breakpoints.up('sm')]: {
+    width: '80%',
+  },
+  [theme.breakpoints.up('md')]: {
+    width: '70%',
+  },
+  [theme.breakpoints.up('lg')]: {
+    width: '60%',
+  },
 }));
+
+const USER_DETAILS_STORAGE_KEY = "userDetailsFormData";
 
 const UserDetailsStep = ({ onNext, onBack, initialData }) => {
   const [formData, setFormData] = useState({
-    fullName: initialData?.fullName || "",
-    email: initialData?.email || "",
-    avatarUrl: initialData?.avatarUrl || "",
-    specialRequest: initialData?.specialRequest || "",
+    fullName: "",
+    email: "",
+    avatarUrl: "",
+    specialRequest: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+
+
+  useEffect(() => {
+    const savedData = localStorage.getItem(USER_DETAILS_STORAGE_KEY);
+    if (savedData) {
+      setFormData(JSON.parse(savedData));
+    } else if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
+
+ 
+  useEffect(() => {
+    if (Object.values(formData).some(value => value !== "")) {
+      localStorage.setItem(USER_DETAILS_STORAGE_KEY, JSON.stringify(formData));
+    }
+  }, [formData]);
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -94,8 +120,14 @@ const UserDetailsStep = ({ onNext, onBack, initialData }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
+      localStorage.removeItem(USER_DETAILS_STORAGE_KEY);
       onNext({ ...formData });
     }
+  };
+
+  const handleBack = () => {
+    localStorage.setItem(USER_DETAILS_STORAGE_KEY, JSON.stringify(formData));
+    onBack();
   };
 
   const handleImageUrlChange = (e) => {
@@ -118,11 +150,18 @@ const UserDetailsStep = ({ onNext, onBack, initialData }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          p: 4,
+          p: { xs: 2, sm: 3, md: 4 }, 
         }}
       >
         <StyledPaper elevation={3} sx={{borderRadius: '12px'}} >
-          <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box sx={{ 
+            mb: 4, 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            flexDirection: { xs: 'column', sm: 'row' }, 
+            gap: { xs: 1, sm: 0 }
+          }}>
             <Typography variant="h6" color="text.primary">
               User Details
             </Typography>
@@ -188,12 +227,13 @@ const UserDetailsStep = ({ onNext, onBack, initialData }) => {
 
             <Box sx={{ 
               display: 'grid', 
-              gridTemplateColumns: '1fr 1fr', 
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, 
               gap: 2, 
               mt: 4 
             }}>
               <Button
                 variant="contained"
+                id="btn"
                 onClick={onBack}
                 sx={{ 
                   bgcolor: 'rgba(19, 78, 74, 0.3)',
@@ -207,6 +247,7 @@ const UserDetailsStep = ({ onNext, onBack, initialData }) => {
               </Button>
               <Button
                 type="submit"
+                id="btn"
                 variant="contained"
                 color="primary"
                 sx={{ py: 1.5 }}

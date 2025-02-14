@@ -6,12 +6,15 @@ import Nav from "../../components/Nav";
 
 const STORAGE_KEY = "ticketBookingData";
 
+// Define initial state
+const initialState = {
+  ticketInfo: null,
+  userDetails: null,
+};
+
 const TicketBookingFlow = () => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    ticketInfo: null,
-    userDetails: null,
-  });
+  const [formData, setFormData] = useState(initialState);
 
   // Load saved data from localStorage on initial render
   useEffect(() => {
@@ -59,11 +62,9 @@ const TicketBookingFlow = () => {
   };
 
   const handleDownload = () => {
-    // Implementation for ticket download
     const ticketDetails = getTicketDetails();
     if (!ticketDetails) return;
     
-    // Create downloadable content
     const content = `
       Techember Fest '25 Ticket
       Attendee: ${ticketDetails.attendee}
@@ -85,23 +86,26 @@ const TicketBookingFlow = () => {
   };
 
   const handleEmail = async () => {
-    // Email functionality would be implemented on the backend
     console.log("Sending ticket via email...");
   };
 
+  const resetForm = () => {
+    // Reset form state
+    setFormData(initialState);
+    // Clear localStorage
+    localStorage.removeItem(STORAGE_KEY);
+    // Reset to first step
+    setStep(1);
+  };
+
   return (
-
-
- 
-     
     <div 
-   
-    id="con"
+      id="con"
       className="min-h-screen bg-teal-950"
       role="main"
       aria-live="polite"
     >
-        <Nav/>
+      <Nav/>
       {step === 1 && (
         <TicketSelectionStep 
           onNext={(data) => handleNext({ ticketInfo: data })}
@@ -122,6 +126,7 @@ const TicketBookingFlow = () => {
           ticketDetails={getTicketDetails()}
           onDownload={handleDownload}
           onEmail={handleEmail}
+          onReset={resetForm}
         />
       )}
     </div>

@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-// Custom theme
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -32,7 +31,6 @@ const theme = createTheme({
   },
 });
 
-// Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: 'vh',
   width: '60%',
@@ -41,6 +39,13 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: 'rgba(16, 36, 36, 0.9)',
   display: 'flex',
   flexDirection: 'column',
+  [theme.breakpoints.down('md')]: {
+    width: '80%',
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '95%',
+    padding: theme.spacing(2),
+  },
 }));
 
 const TicketCard = styled(Paper)(({ theme, selected }) => ({
@@ -83,8 +88,7 @@ const TicketSelectionStep = ({ onNext, initialData }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          // borderRadius: '12px',
-          p: 4,
+          p: { xs: 2, sm: 3, md: 4 },
         }}
       >
         <StyledPaper elevation={3} sx={{borderRadius: '12px' }} >
@@ -123,7 +127,7 @@ const TicketSelectionStep = ({ onNext, initialData }) => {
 
           <Grid container spacing={2} sx={{ mb: 4 }}>
             {tickets.map((ticket) => (
-              <Grid item xs={4} key={ticket.type}>
+              <Grid item xs={12} sm={6} md={4} key={ticket.type}>
                 <TicketCard
                   selected={selectedTicket?.type === ticket.type}
                   onClick={() => setSelectedTicket(ticket)}
@@ -170,7 +174,7 @@ const TicketSelectionStep = ({ onNext, initialData }) => {
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
               gap: 2,
               mt: 'auto'
             }}
